@@ -1,10 +1,14 @@
+import Square from './Square.js'
+import Snake from './Snake.js'
+
+console.log('Iniciando juego ...')
+
 const myCanvas = document.getElementById('myCanvas');
 const context = myCanvas.getContext('2d');
 
-const SIZE = 20;
+const snake = new Snake();
 
-const head = { x: 0, y: 0 };
-const body = [];
+const SIZE = 20;
 
 let dx = 0;
 let dy = 0;
@@ -16,8 +20,8 @@ let food = null;
 setInterval(main, 150); // 1000ms = 1s
 
 function main () {
- 	update();
- 	draw();
+ 	update();	// actualizar las variables del juego
+ 	draw();		// dibujar todos los objetos del juego
  } 
 
 function update() {
@@ -30,28 +34,27 @@ function update() {
 
 	// salvar la posición última del último elemento de la serpiente
 	let prevX, prevY;
-	if (body.length >= 1) {
-		prevX = body[body.length-1].x;
-		prevY = body[body.length-1].y;
+	if (snake.body.length >= 1) {
+		prevX = snake.body[snake.body.length-1].x;
+		prevY = snake.body[snake.body.length-1].y;
 	} else {
-		prevX = head.x;
-		prevY = head.y;
+		prevX = snake.head.x;
+		prevY = snake.head.y;
 	}
 	
 
 	// el cuerpo de la serpiente siga a la cabeza de la serpiente
-	for (let i = body.length - 1; i >= 1; i--) {
-		body[i].x = body[i-1].x;
-		body[i].y = body[i-1].y;
+	for (let i = snake.body.length - 1; i >= 1; i--) {
+		snake.body[i].x = snake.body[i-1].x;
+		snake.body[i].y = snake.body[i-1].y;
 	}
-	if (body.length >= 1) {
-		body[0].x = head.x;
-		body[0].y = head.y;
+	if (snake.body.length >= 1) {
+		snake.body[0].x = snake.head.x;
+		snake.body[0].y = snake.head.y;
 	}
 
 	// actualizar las coordenadas de la cabeza de la serpiente
-	head.x += dx;
-	head.y += dy;
+	snake.head.move(dx, dy);
 
 	// determinamos en qué eje ha ocurrido el último movimiento
 	if (dx !== 0) {
@@ -61,7 +64,7 @@ function update() {
 	}
 
 	// detectar si la serpiente ha consumido el alimento
-	if (food && head.x === food.x && head.y === food.y) {
+	if (food && snake.head.checkCollision(food)) {
 		food = null;
 		// aumentar el tamaño de la serpiente
 		increaseSnakeSize(prevX, prevY);
@@ -75,20 +78,12 @@ function update() {
 
 function checkSnakeCollision() {
 	// coordenadas de la cabeza sean igual a las coordenadas de un elem del cuerpo
-	for (let i = 0; i < body.length; i++) {
-		if (head.x === body[i].x && head.y === body[i].y) {
-			return true;
-		}
-	}
+	if (snake.hasCollided())
+		return true;
 
 	// verificar que la serpiente no se salga de los límites permitidos
-	const topCollision = (head.y < 0);
-	const buttomCollision = (head.y > 440);
-	const rightCollision = (head.x > 380);
-	const leftCollision = (head.x < 0);
-	if (topCollision || buttomCollision || rightCollision || leftCollision) {
-		return true
-	}
+	if(snake.hasBrokenTheLimits(0, myCanvas.width-SIZE, 0, myCanvas.height-SIZE))
+		return true;
 
 	return false;
 }
@@ -96,40 +91,29 @@ function checkSnakeCollision() {
 
 function gameOver () {
 	alert('Has perdido');
-	head.x = 0;
-	head.y = 0;
 	dy = 0; dx = 0;
-	body.length = 0;
+	snake.reset();
 }
 
 
 function increaseSnakeSize(prevX, prevY) {
-	body.push({
-		x: prevX, y: prevY
-	});
+	snake.body.push(
+		new Square(prevX, prevY)
+	);
 }
 
 function randomFoodPosition() {
 	let position;
 	do {
-		position = { x: getRandomX(), y: getRandomY() };
+		position = new Square(getRandomX(), getRandomY());
 	} while (checkFoodCollision(position));
 	return position;
 }
 
 
 function checkFoodCollision(position) {
-	// comparar las  coordenadas del alimento con las coordenadas de un elem del cuerpo
-	for (let i = 0; i < body.length; i++) {
-		if (position.x === body[i].x && position.y === body[i].y) {
-			return true;
-		}
-	}
-
-	// comparar las  coordenadas del alimento con las coordenadas de la cabeza
-	if (position.x === head.x && position.y === head.y) {
-			return true;
-		}
+	if(snake.checkFullCollision(position))
+		return true;
 	
 	return false;
 }
@@ -152,10 +136,10 @@ function draw() {
 	context.fillRect(0, 0, myCanvas.width, myCanvas.height);
 
 	// cabeza
-	drawObject(head, 'lime');	
+	drawObject(snake.head, 'lime');	
 
 	// cuerpo
-	body.forEach(
+	snake.body.forEach(
 		elem => drawObject(elem, 'lime')
 		);
 
