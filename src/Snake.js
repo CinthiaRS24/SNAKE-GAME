@@ -6,6 +6,33 @@ export default class {
         this.body = []
     }
 
+    addElement(element) {
+        this.body.push(element);
+    }
+
+    move(dx, dy) {
+        // el cuerpo de la serpiente siga a la cabeza de la serpiente
+        for (let i = this.body.length - 1; i >= 1; i--) {
+            this.body[i].x = this.body[i-1].x;
+            this.body[i].y = this.body[i-1].y;
+        }
+        if (this.body.length >= 1) {
+            this.body[0].x = this.head.x;
+            this.body[0].y = this.head.y;
+        }
+
+        // actualizar las coordenadas de la cabeza de la serpiente
+        this.head.move(dx, dy);
+    }
+
+    getLastElement() {
+        if (this.body.length >= 1) {
+            return this.body[this.body.length-1];
+        } else {
+            return this.head;
+        }
+    }
+
     hasCollided() {
         for (let i = 0; i < this.body.length; i++) {
             if (this.body[i].checkCollision(this.head)) {
