@@ -1,5 +1,6 @@
 import Square from "./Square";
 import Snake from "./Snake";
+import swal from 'sweetalert';
 
 export default class {
     constructor(idCanvasElement, standardSize=20) {
@@ -65,7 +66,9 @@ export default class {
     }
 
     gameOver () {
-        alert('Has perdido');
+        swal({
+            title: "Has perdido!",
+          });
         this.dy = 0; this.dx = 0;
         this.snake.reset();
     }
