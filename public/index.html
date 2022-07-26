@@ -7,7 +7,23 @@
 		<title>Juego de la Snake</title>
 	</head>
 	<body>
-		<canvas id="myCanvas" width="400" height="460"></canvas>
+		<div id="divGeneral">
+			<div class="divInstructions">
+				<p class="instructions">INSTRUCCIONES</p>
+				<p>- El color verde representa a la serpiente</p>
+				<p>- El color blanco representa el alimento de la serpiente</p>
+				<p>- Para desplazarte utiliza las flechas de tu teclado:</p>
+				<img class="img" src="https://images.vexels.com/media/users/3/153199/isolated/preview/c0facb164c02a5815d7efea4eb898a98-keyboard-arrow-keys-stroke-icon.png">
+				<p>- Perderás cuando:</p>
+				<div class="divGameOver">
+					<p>1. La serpiente colisione con uno de los extremos dle cuadrado del juego</p>
+					<p>2. La serpiente colisione con su propio cuerpo</p>
+				</div>
+			</div>
+			
+			<canvas id="myCanvas" width="400" height="460"></canvas>
+		</div>
+		
 
 		<script src="bundle.js"></script>
 	</body>
