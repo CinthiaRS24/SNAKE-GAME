@@ -3,7 +3,7 @@ Esta aplicación consiste en el clásico juego de la snake (serpiente).
 
 ### Características:
 - El color verde representa a la serpiente.
-- El color blanco represente el alimento de la serpiente.
+- El color blanco representa el alimento de la serpiente.
 - Habrás perdido si la serpiente colisiona con uno de los 4 extremos del cuadro de juego.
 - Habrás perdido si la serpiente colisiona con su mismo cuerpo.
 - Al perder, aparecerá una alerta, y se reiniciará el juego.
